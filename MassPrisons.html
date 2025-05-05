@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Massachusetts Prisons Map</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
+  <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+  <style>
+    body { margin: 0; padding: 0; }
+    #map { position: absolute; top: 0; bottom: 0; width: 100%; }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <script>
+    mapboxgl.accessToken = 'pk.eyJ1IjoiYnBldXJhMDUiLCJhIjoiY205aXN4YnQ3MDVnczJrb2FvcjF2NTR0eiJ9.QF4G6iKqT0T6L4V2RB2g1A';
+
+    const map = new mapboxgl.Map({
+      container: 'map',
+      style: 'mapbox://styles/bpeura05/cm9nlqj2a00he01rwggagcsm7',
+      center: [-71.217, 42.327],
+      zoom: 7.56
+    });
+
+    map.on('load', () => {
+      map.addSource('prisons', {
+        type: 'geojson',
+        data: {
+          type: 'FeatureCollection',
+          features: [
+            {
+              type: 'Feature',
+              geometry: { type: 'Point', coordinates: [-72.6392, 42.3196] },
+              properties: { NAME: 'Hampshire County Jail and House of Correction' }
+            },
+            {
+              type: 'Feature',
+              geometry: { type: 'Point', coordinates: [-73.2383, 42.4789] },
+              properties: { NAME: 'Berkshire County Jail and House of Correction' }
+            },
+            {
+              type: 'Feature',
+              geometry: { type: 'Point', coordinates: [-71.2532, 42.1411] },
+              properties: { NAME: 'MCI - Cedar Junction' }
+            },
+            {
+              type: 'Feature',
+              geometry: { type: 'Point', coordinates: [-71.2527, 42.1442] },
+              properties: { NAME: 'Pondville Correctional Center' }
+            },
+            {
+              type: 'Feature',
+              geometry: { type: 'Point', coordinates: [-72.6022, 42.5912] },
+              properties: { NAME: "Franklin County Sheriff's Office" }
+            },
+            {
+              type: 'Feature',
+              geometry: { type: 'Point', coordinates: [-71.0662, 42.3578] },
+              properties: { NAME: 'Suffolk County House of Correction' }
+            },
+            {
+              type: 'Feature',
+              geometry: { type: 'Point', coordinates: [-70.9466, 42.4295] },
+              properties: { NAME: 'Essex County Correctional Facility' }
+            },
+            {
+              type: 'Feature',
+              geometry: { type: 'Point', coordinates: [-71.4903, 42.1145] },
+              properties: { NAME: 'Norfolk County Correctional Center' }
+            }
+          ]
+        }
+      });
+
+      map.addLayer({
+        id: 'prisons-layer',
+        type: 'circle',
+        source: 'prisons',
+        paint: {
+          'circle-radius': 6,
+          'circle-color': '#e531c6'
+        }
+      });
+
+      const popup = new mapboxgl.Popup({
+        closeButton: false,
+        closeOnClick: false
+      });
+
+      map.on('mouseenter', 'prisons-layer', (e) => {
+        map.getCanvas().style.cursor = 'pointer';
+        const coordinates = e.features[0].geometry.coordinates.slice();
+        const name = e.features[0].properties.NAME;
+        popup.setLngLat(coordinates).setHTML(`<strong>${name}</strong>`).addTo(map);
+      });
+
+      map.on('mouseleave', 'prisons-layer', () => {
+        map.getCanvas().style.cursor = '';
+        popup.remove();
+      });
+    });
+  </script>
+</body>
+</html>
